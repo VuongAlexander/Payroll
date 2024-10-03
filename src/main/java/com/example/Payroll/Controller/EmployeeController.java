@@ -1,5 +1,6 @@
 package com.example.Payroll.Controller;
 
+import com.example.Payroll.DTO.EmployeeModelAssembler;
 import com.example.Payroll.Exceptions.EmployeeNotFoundException;
 import com.example.Payroll.Model.Employee;
 import com.example.Payroll.Repository.EmployeeRepository;
@@ -19,7 +20,7 @@ public class EmployeeController {
     private final EmployeeRepository employeeRepository;
     private final EmployeeModelAssembler employeeModelAssembler;
 
-    EmployeeController(EmployeeRepository employeeRepository, EmployeeModelAssembler employeeModelAssembler){
+    public EmployeeController(EmployeeRepository employeeRepository, EmployeeModelAssembler employeeModelAssembler){
         this.employeeRepository = employeeRepository;
         this.employeeModelAssembler = employeeModelAssembler;
     }
@@ -27,7 +28,7 @@ public class EmployeeController {
 
     //getting aggregate root resource using assembler
     @GetMapping("/employees")
-    CollectionModel<EntityModel<Employee>> getAllEmployees() {
+    public CollectionModel<EntityModel<Employee>> getAllEmployees() {
         //simplified using EmployeeModelAssembler
         List<EntityModel<Employee>> employees = employeeRepository.findAll().stream()
                 .map(employeeModelAssembler::toModel)
@@ -40,7 +41,7 @@ public class EmployeeController {
 
     //creating a new item resource using assembler
     @PostMapping("/employees")
-    ResponseEntity<?> createEmployee(@RequestBody Employee newEmployee){
+    public ResponseEntity<?> createEmployee(@RequestBody Employee newEmployee){
 
         EntityModel<Employee> entityModel = employeeModelAssembler.toModel(employeeRepository.save(newEmployee));
 
@@ -52,7 +53,7 @@ public class EmployeeController {
 
     //getting single item resource using assembler
     @GetMapping("/employees/{id}")
-    EntityModel<Employee> getEmployeeById(@PathVariable Long id){
+    public EntityModel<Employee> getEmployeeById(@PathVariable Long id){
         //simplified using EmployeeModelAssembler
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
@@ -62,7 +63,7 @@ public class EmployeeController {
 
     //replacing employee resource using assembler
     @PutMapping("/employees/{id}")
-    ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
+    public ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
         Employee updatedEmployee = employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newEmployee.getName());
@@ -81,7 +82,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/employees/{id}")
-    ResponseEntity<?> deleteEmployee(@PathVariable Long id){
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id){
         employeeRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
